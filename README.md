@@ -12,7 +12,7 @@ Our aim will be to train a policy that tries to maximize the discounted, cumulat
 
 The main idea behind Q-learning is that if we had a function $Q^*: State \times Action \rightarrow \mathbb{R}$, that could tell us what our return would be, if we were to take an action in a given state, then we could easily construct a policy that maximizes our rewards: 
 
-$$\pi^*(s) = \arg\!\max_a Q^*(s, a)$$
+$$\pi^{*}(s) = \arg\!\max_a Q^{*}(s, a)$$
 
 However, we don’t know everything about the world, so we don’t have access to $Q^*$ . But, since neural networks are universal function approximators, we can simply create one and train it to resemble $Q^*$.
 
