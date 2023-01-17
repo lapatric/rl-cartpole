@@ -8,7 +8,11 @@ We make use of [OpenAI Gym](https://gymnasium.farama.org/).
 
 Our environment is deterministic, so all equations presented here are also formulated deterministically for the sake of simplicity. In the reinforcement learning literature, they would also contain expectations over stochastic transitions in the environment.
 
-Our aim will be to train a policy that tries to maximize the discounted, cumulative reward $R_{t_0} = \sum_{t=t_0}^{\infty} \gamma^{t - t_0} r_t$​, where $R_{t_0}$ is also known as the return. The discount, $\gamma$, should be a constant between $0$ and $1$ that ensures the sum converges. A lower $\gamma$ makes rewards from the uncertain far future less important for our agent than the ones in the near future that it can be fairly confident about. It also encourages agents to collect reward closer in time than equivalent rewards that are temporally far away in the future.
+Our aim will be to train a policy that tries to maximize the discounted, cumulative reward 
+
+$$R_{t_0} = \sum_{t=t_0}^{\infty} \gamma^{t - t_0} r_t$$
+
+where $R_{t_0}$ is also known as the *return*. The discount, $\gamma$, should be a constant between $0$ and $1$ that ensures the sum converges. A lower $\gamma$ makes rewards from the uncertain far future less important for our agent than the ones in the near future that it can be fairly confident about. It also encourages agents to collect reward closer in time than equivalent rewards that are temporally far away in the future.
 
 The main idea behind Q-learning is that if we had a function $Q^*: State \times Action \rightarrow \mathbb{R}$, that could tell us what our return would be, if we were to take an action in a given state, then we could easily construct a policy that maximizes our rewards: 
 
@@ -29,5 +33,9 @@ To minimise this error, we will use the [Huber loss](https://en.wikipedia.org/wi
 $$
 \mathcal{L} = \frac{1}{|B|}\sum_{(s, a, s', r) \ \in \ B} \mathcal{L}(\delta)$$
 
-$$\text{where} \quad \mathcal{L}(\delta) = \begin{cases} \frac{1}{2}{\delta^2} & \text{for } |\delta| \le 1, \\ |\delta| - \frac{1}{2} & \text{otherwise.} \end{cases}
+$$\text{where} \quad \mathcal{L}(\delta) = 
+\begin{cases} 
+  \frac{1}{2}{\delta^2} & \text{for} |\delta| \le 1, \\ 
+  |\delta| - \frac{1}{2} & \text{otherwise.} 
+\end{cases}
 ​$$
