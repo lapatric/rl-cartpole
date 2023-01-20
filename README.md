@@ -73,7 +73,10 @@ $$loss(Q(s, a), \ r + \gamma \max_a Q(s', a)).$$
 state_action_value = policy_net(state).gather(1, action)
 
 # compute expected return of the next state max_{a'} Q(s', a')
-with torch.no_grad():
+if next_state is None:
+  next_state_value = 0
+else:
+  with torch.no_grad():
     next_state_value = target_net(next_state).max(1)[0]
 
 # compute expected discounted return r + gamma * max_{a'} Q(s', a')
@@ -85,11 +88,12 @@ loss = nn.SmoothL1Loss(state_action_value, expected_state_action_value)
 
 ```
 
-Notice how we predict the *expected discounted return*, $\max_a Q(s', a)$, using a second neural network `target_net`. This approach is taken for added stability during training. Both networks are identical in architecture. However, instead of using back-propagation as we do with `policy_net`, we use a manual approach to update the weights of `target_net` which leverages the weights of our `policy_net`:
+Notice how we predict the *expected discounted return*, $\max_a Q(s', a)$, using a second neural network `target_net`. This approach is taken for added stability during training. Furthermore, we only compute the extected return value on *non-terminal* states. For *terminal* states, we take the known return value of $0$ as our ground-truth.
+
+Both the `policy` and `target` network are identical in architecture, however, instead of using back-propagation as we do for the `policy` network, we use a manual approach to softly update the weights of the `target` network, leveraging the newly updated weights of our `policy` network:
 
 ```python
-# Soft update of the target network's weights
-# θ′ ← τ θ + (1 −τ )θ′
+# Soft update of the target network's weights θ′ ← τ θ + (1 −τ )θ′
 target_net_state_dict = target_net.state_dict()
 policy_net_state_dict = policy_net.state_dict()
 for key in policy_net_state_dict:
