@@ -18,7 +18,7 @@ The main idea behind Q-learning is that if we had a function $Q^*: State \times 
 
 $$\pi^*(s) = \arg\max_a Q^{\ast}(s, a)$$
 
-However, we don’t know everything about the world, so we don’t have access to $Q^*$ . But, since neural networks are universal function approximators, we can simply create one and train it to resemble $Q^*$.
+However, we don’t know everything about the world, so we don’t have access to $Q^{\ast}$ . But, since neural networks are universal function approximators, we can simply create one and train it to resemble $Q^{\ast}$.
 
 For our training update rule, we’ll use a fact that every $Q$ function for some policy obeys the *Bellman equation*:
 
