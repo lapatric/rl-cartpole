@@ -2,6 +2,7 @@ import gymnasium as gym
 import math
 import random
 import numpy as np
+from tqdm import tqdm
 import matplotlib
 import matplotlib.pyplot as plt
 from collections import namedtuple, deque
@@ -12,6 +13,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
+print("Instantiating environment...")
 env = gym.make('CartPole-v1')
 
 # set up matplotlib
@@ -25,8 +27,6 @@ plt.ion()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 Transition = namedtuple('Transition', ['state', 'action', 'next_state', 'reward'])
-print(Transition.__doc__) 
-
 
 # ReplayMemory
 class ReplayMemory(object):
@@ -82,7 +82,6 @@ memory = ReplayMemory(10000)
 steps_done = 0
 
 def select_action(state):
-    print("State in select_action:", state, flush=True)
     global steps_done
     sample = random.random()
     eps_threshold = EPS_END + (EPS_START - EPS_END) * math.exp(-1. * steps_done / EPS_DECAY)
@@ -175,28 +174,21 @@ else:
 
 
 print("Starting training...", flush=True)
-for i_episode in range(num_episodes):
+for i_episode in tqdm(range(num_episodes)):
     # Initialize the environment and get it's state
     state, _ = env.reset()
     state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
-    for i, t in enumerate(count()):
-        print("Running step ", i, "...", flush=True)
-        print("Select action", flush=True)
+    for t in count():
         action = select_action(state)
-        print("Perform step", flush=True)
         observation, reward, terminated, truncated, _ = env.step(action.item())
-        print("Assign output", flush=True)
         reward = torch.tensor([reward], device=device)
         done = terminated or truncated
-
-        print("Step complete...", flush=True)
 
         if terminated:
             next_state = None
         else:
             next_state = torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
 
-        print("Push transition to memory...", len(memory), flush=True)
         # Store the transition in memory
         memory.push(state, action, next_state, reward)
 
@@ -204,10 +196,8 @@ for i_episode in range(num_episodes):
         state = next_state
 
         # Perform one step of the optimization (on the policy network)
-        print("Optimize model...", flush=True)
         optimize_model()
 
-        print("Update target net...", flush=True)
         # Soft update of the target network's weights
         # θ′ ← τ θ + (1 −τ )θ′
         target_net_state_dict = target_net.state_dict()
@@ -216,14 +206,13 @@ for i_episode in range(num_episodes):
             target_net_state_dict[key] = policy_net_state_dict[key]*TAU + target_net_state_dict[key]*(1-TAU)
         target_net.load_state_dict(target_net_state_dict)
 
-        print(done, "Plot durations...", flush=True)
         if done:
             # episode_durations.append(t + 1)
             # plot_durations()
             break
 
 
-print('Complete', flush=True)
+print('Done.', flush=True)
 # plot_durations(show_result=True)
 # plt.ioff()
 # plt.show()
