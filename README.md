@@ -66,7 +66,7 @@ next_state = None if terminated else torch.tensor(next_state, dtype=torch.float3
 
 Given this transition $(s, a) \to (r, s')$ w.r.t. our environment, we can now train our policy network to predict the expected discounted return $Q(s, a)$ for this state-action pair. We do so by passing $s$ through the network which yields $[Q(s, \text{left})$, $Q(s, \text{right})]$. We then compute a loss on the relevant value $Q(s, a)$, $a \in \{\text{left}, \text{right}\}$, using insights from the *Bellman Equation* as discussed above:
 
-$$loss(Q(s, \text{a}), \ r + \gamma \max_a Q(s', a)).$$
+$$loss(Q(s, a), \ r + \gamma \max_a Q(s', a)).$$
 
 ```python
 # compute [Q(s, left), Q(s, right)] and select the relevant one for the performed action
@@ -96,3 +96,7 @@ for key in policy_net_state_dict:
   target_net_state_dict[key] = TAU * policy_net_state_dict[key] + (1-TAU) * target_net_state_dict[key]
 target_net.load_state_dict(target_net_state_dict)
 ```
+
+## Memory Replay
+
+As layed out in the sections above, each step in our environment yields a transition $(s, a) \to (r, s')$ which we use to train our policy (and target) network using the contraint enforced by the Bellman Equation, $loss(Q_{policy}(s, a), \ r + \gamma \max_a Q_{target}(s', a))$. Now, to speed up the learning process of our model we store each observed transition in a list and subsequently train our model over a batch of transitions at a time. In particular, each batch is sampled u.a.r. from the list of all observed transitions, making the transitions that build up a batch decorrelated. This has been shown to greatly stabilize and improve the DQN training procedure.
