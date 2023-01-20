@@ -170,7 +170,7 @@ def optimize_model():
 if torch.cuda.is_available():
     num_episodes = 600
 else:
-    num_episodes = 50
+    num_episodes = 500
 
 
 print("Starting training...", flush=True)
@@ -207,12 +207,12 @@ for i_episode in tqdm(range(num_episodes)):
         target_net.load_state_dict(target_net_state_dict)
 
         if done:
-            # episode_durations.append(t + 1)
-            # plot_durations()
+            episode_durations.append(t + 1)
+            plot_durations()
             break
 
 
 print('Done.', flush=True)
-# plot_durations(show_result=True)
-# plt.ioff()
-# plt.show()
+plot_durations(show_result=True)
+plt.ioff()
+plt.show()
