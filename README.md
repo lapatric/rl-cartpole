@@ -1,4 +1,4 @@
-# Cartpole Reinforcement Learning
+# Cartpole Reinforcement Learning (DQN)
 
 This repository follows a long with the [PyTorch tutorial](https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html) on Reinforcement Learning, specifically Deep Q Learning (DQN).
 
