@@ -105,4 +105,33 @@ target_net.load_state_dict(target_net_state_dict)
 
 As layed out in the sections above, each step in our environment yields a transition $(s, a) \to (r, s')$ which we use to train our policy (and target) network using the contraint enforced by the Bellman Equation, $loss(Q_{policy}(s, a), \ r + \gamma \max_a Q_{target}(s', a))$. Now, to speed up the learning process of our model we store each observed transition in a list and subsequently train our model over a batch of transitions at a time. In particular, each batch is sampled u.a.r. from the list of all observed transitions, making the transitions that build up a batch decorrelated. This has been shown to greatly stabilize and improve the DQN training procedure.
 
-## Training on a remote GPU cluster
+## Training on a GPU cloud
+
+We use [Lambda Cloud](https://lambdalabs.com/service/gpu-cloud) for training as it provides a powerful and cost-efficient environment for training neural networks on an HPC. This section assumes that you've already [set up an account](https://cloud.lambdalabs.com/sign-up) at Lambda Labs. 
+
+### Setting up SSH access
+
+To begin, we create a *public-private key pair* which we will use to connect to the cloud via SSH. Upon using the `ssh-keygen` command as specified below, you'll be prompted to specify a name and secret passphrase for your key pair. We'll name our key "lambda_ai" and leave the passphrase blank. Finally, we use `chmod` to restrict the access permissions to your private key in order to keep it safe.
+
+```bash
+cd ~/.ssh
+# generate public-private key pair
+ssh-keygen -t ed25519
+chmod 600 ./lambda_ai
+# print public key 
+cat ./lambda_ai.pub
+```
+
+Now, we enter our [Lambda Dashboard](https://cloud.lambdalabs.com/instances) and add our newly generated SSH key to our set of trusted keys under *SSH keys > Add SSH key*. When prompted, paste in all the contents of your public key (see `cat lambda_ai.pub` above) into the text field and confirm.
+
+### Launching a GPU instance
+
+To launch a GPU instance from the [Lambda Dashboard](https://cloud.lambdalabs.com/instances) navigate to *Instances > Launch Instance*. Proceed by specifying the *Instance type*, *Region* and *Filesystem* and pick the SSH key you added previously.
+
+Once your instance is *Running* (check *STATUS*), copy the *SSH LOGIN* details and run the following command inside a terminal. We use `-i ~/.ssh/lambda_ai` to specify the private key associated with our public key.
+
+```bash
+ssh -i ~/.ssh/lambda_ai <ubuntu@instance-ip-address>
+```
+
+Now you should be logged in to your own remote GPU instance. Great! To check the instance specifications you may run the `nvidia-smi` command inside the same terminal.
