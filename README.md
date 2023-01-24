@@ -124,6 +124,7 @@ cat ./lambda_ai.pub
 
 Now, we enter our [Lambda Dashboard](https://cloud.lambdalabs.com/instances) and add our newly generated public SSH key to our set of trusted keys under *SSH keys > Add SSH key*. When prompted, paste in all the contents of your *public* key (see `cat lambda_ai.pub` above) into the text field and confirm. Never share the *private* part of your public-private key pair with anyone!
 
+
 ### Launching a GPU instance
 
 To launch a GPU instance from the [Lambda Dashboard](https://cloud.lambdalabs.com/instances) we navigate to *Instances > Launch Instance* and proceed by specifying the *Instance type*, *Region* and *Filesystem* and picking the SSH key we added previously.
@@ -135,3 +136,29 @@ ssh -i ~/.ssh/lambda_ai <ubuntu@instance-ip-address>
 ```
 
 Now we should be logged in to our very own remote GPU instance. Awesome! To check the instance specifications we can run the `nvidia-smi` command inside the terminal.
+
+
+### Copying files to GPU cloud
+
+Now that our our GPU instance is up and running, we can copy the necessary files such as `main.py` and `basic_env.yml` over using SSH. This can be done as follows. The appropriate IP address can be copied from the [Lambda Dashboard](https://cloud.lambdalabs.com/instances).
+
+```bash
+scp -i ~/.ssh/lambda_ai ./main.py <ubuntu@instance-ip-address>:/home/ubuntu
+scp -i ~/.ssh/lambda_ai ./basic_env.yml <ubuntu@instance-ip-address>:/home/ubuntu
+```
+
+
+### Setting up the python environment
+
+To manage the coding environment we use [Anaconda](www.anaconda.com). This can easily be installed on the GPU instance by running the following set of commands. This first installs Anaconda such that we can use the `conda` command. Subsequently, the python environment specified in `basic_env.yml` is installed.
+
+```bash
+# install Anaconda
+wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
+sh Anaconda3-2022.10-Linux-x86_64.sh
+bash 
+```
+
+### Running the script
+
+Finally, we are all set. Simply run `python main.py` to begin the training process!
