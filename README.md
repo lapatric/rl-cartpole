@@ -162,3 +162,14 @@ bash
 ### Running the script
 
 Finally, we are all set. Simply run `python main.py` to begin the training process!
+
+
+## CPU vs GPU Runtime (general comparison)
+
+Generally, the of training of neural networks on a server with high-end GPUs runs significantly faster soley using CPUs. This can be shown by running a simple little comparison. The script used for this comparison was taken from [this Medium article](https://towardsdatascience.com/how-fast-gpu-computation-can-be-41e8cff75974) which contains further details. Although the model used in this script differs from ours, the teachings hold steadfast. 
+
+| | time (in seconds) |
+|---|---|
+| **CPU** | 110.57620406150818  | 
+| **CUDA** | 2.7178804874420166 |
+| **CUDA with Tensor Cores** |  0.217362642288208 |
