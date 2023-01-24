@@ -168,7 +168,7 @@ def optimize_model():
 
 
 if torch.cuda.is_available():
-    num_episodes = 600
+    num_episodes = 1000
 else:
     num_episodes = 500
 
@@ -208,7 +208,7 @@ for i_episode in tqdm(range(num_episodes)):
 
         if done:
             episode_durations.append(t + 1)
-            plot_durations()
+            if i_episode % 10: plot_durations()
             break
 
 
