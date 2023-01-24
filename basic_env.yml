@@ -1,0 +1,14 @@
+name: gym
+channels:
+  - defaults
+  - pytorch
+dependencies:
+  - python
+  - matplotlib
+  - torchaudio
+  - pytorch
+  - torchvision
+  - pip
+  - tqdm
+  - pip:
+    - gymnasium
